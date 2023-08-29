@@ -1,0 +1,30 @@
+html
+{
+  width: 250px;
+}
+
+body {
+  padding: 8px;
+  padding-top: 0px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h1 img {
+  vertical-align: middle;
+  margin-top: -4px;
+}
+
+form h3 {
+  margin: 4px;
+}
+
+form div {
+  padding: 4px 0px;
+}
+
+input[type=checkbox], label {
+  cursor: pointer;
+}
