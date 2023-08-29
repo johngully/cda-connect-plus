@@ -4,23 +4,28 @@
 }
 
 /* Remove extraneous table columns */
-#assignment-center-list-view table tr > *:nth-child(2) {
+#assignment-center-list-view.optimize-columns table tr > *:nth-child(2) {
   display: none !important;
 }
 
-#assignment-center-list-view table tr > *:nth-child(4) {
+#assignment-center-list-view.optimize-columns table tr > *:nth-child(4) {
   display: none !important;
 }
 
 /* Resize table columns after removing columns */
-#assignment-center-list-view table tr > *:nth-child(1) {
+#assignment-center-list-view.optimize-columns table tr > *:nth-child(1) {
   width: 10% !important;
 }
 
-#assignment-center-list-view table tr > *:nth-child(3) {
+#assignment-center-list-view.optimize-columns table tr > *:nth-child(3) {
   width: 80% !important;
 }
 
-#assignment-center-list-view table tr > *:nth-child(5) {
+#assignment-center-list-view.optimize-columns table tr > *:nth-child(5) {
   width: 10% !important;
+}
+
+/* Remove extraneous table rows */
+#assignment-center-list-view.hide-non-homework table tr.hide {
+  display: none !important;
 }
