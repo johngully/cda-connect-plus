@@ -9,13 +9,30 @@
     "48": "cda-blue-48.png",
     "128": "cda-blue-128.png"
   },
+  "action": {
+    "name": "CDA Connect Plus",
+    "permissions": [ "tabs" ],
+    "default_popup": "popup.html"
+  },
   "content_scripts":[
     {
+      "matches":["*://coramdeoacademy.myschoolapp.com/*"],
+      "js":[
+        "utils/date.js",
+        "utils/html-utils.js",
+        "assignments.js",
+        "router.js"
+      ]
+    },
+    {
       "matches":["*://coramdeoacademy.myschoolapp.com/*?pl=*"],
-      "js": ["print-format.js"],
+      "js": [
+        "utils/html-utils.js",
+        "print-format.js"
+      ],
       "css": ["print-format.css"],
       "run_at": "document_start"
-     }
+    }
   ],
-  "permissions": [ "activeTab" ]
+  "permissions": [ "activeTab", "storage" ]
 }

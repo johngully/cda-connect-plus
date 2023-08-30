@@ -1,5 +1,3 @@
-console.log("popup.js - Loaded");
-
 async function init() {
   // Populate form with settings
   const { printSettings } = await getSettings();
@@ -32,35 +30,15 @@ async function formOnChangeHandler(event) {
 }
 
 async function getSettings() {
-  const result = await getFromStorage("printSettings");
+  const result = await _getFromStorage("printSettings");
   // console.log("Settings", JSON.stringify(result));
   return result;
 }
 
 async function saveSettings(printSettings) {
   const data = { printSettings };
-  await setStorage(data);
+  await _setToStorage(data);
   // const result = await getFromStorage("printSettings");
-}
-
-function getFromStorage(key) {
-  return new Promise((resolve, reject) => {
-    if (key != null) {
-      chrome.storage.local.get(key, function (obj) {
-        resolve(obj);
-      });
-    } else {
-      reject(null);
-    }
-  });
-}
-
-function setStorage(data) {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.set(data, function (obj) {
-      resolve(obj);
-    });
-  });
 }
 
 init();
