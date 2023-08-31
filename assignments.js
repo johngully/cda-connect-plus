@@ -1,6 +1,6 @@
 async function initAssignments() {
   await _waitForElement(".assignment-calendar-header");
-  const settings = { schedule: "monday" };
+  const { settings } = await _getFromStorage("settings");
   const days = calculateDays(settings);
   setupDayOfWeekButtons(days);
 
@@ -62,10 +62,10 @@ function setupDayOfWeekButtons(days) {
   });
 }
 
-function dayChange(input) {
+async function dayChange(input) {
   const day = new Date(input.value);
   const dateRange = calculateDateRange(day);
-  setRange(dateRange);
+  await setRange(dateRange);
 }
 
 function calculateDateRange(day) {
@@ -76,16 +76,17 @@ function calculateDateRange(day) {
   return range;
 } 
 
-function setRange(dateRange) {
+async function setRange(dateRange) {
   const startDateInput = document.getElementById("range-start-date");
   const endDateInput = document.getElementById("range-end-date");
-  setValue(startDateInput, dateRange.startDate);
-  setValue(endDateInput, dateRange.endDate);
+  await setValue(startDateInput, dateRange.startDate);
+  await setValue(endDateInput, dateRange.endDate);  
 }
 
-function setValue(element, value) {
+async function setValue(element, value) {
   element.setAttribute("value", value);
   element.dispatchEvent(new Event('input', { bubbles: true }));
   element.dispatchEvent(new Event('change', { bubbles: true }));
   element.dispatchEvent(new Event('blur', { bubbles: true }));
+  await _timeout(20); // Add this delay to ensure that the CDA connect code has time to process.
 }

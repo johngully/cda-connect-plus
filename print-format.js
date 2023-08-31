@@ -1,11 +1,11 @@
 async function init() {
-  const { printSettings } = await getSettings();
-  await removeExtraAssignments(printSettings);
-  await removeExtraColumns(printSettings);
+  const { settings } = await getSettings();
+  await removeExtraAssignments(settings);
+  await removeExtraColumns(settings);
 }
 
-async function removeExtraAssignments(printSettings) {
-  if (!printSettings["hide-non-homework"]) {
+async function removeExtraAssignments(settings) {
+  if (!settings["hide-non-homework"]) {
     return;
   }
 
@@ -32,8 +32,8 @@ function removeNonHomeworkRows() {
   addClassToElements(rows, "hide");
 }
 
-async function removeExtraColumns(printSettings) {
-  if (!printSettings["optimize-columns"]) {
+async function removeExtraColumns(settings) {
+  if (!settings["optimize-columns"]) {
     return;
   }
 
@@ -61,7 +61,7 @@ function addClassToElements(elements, className) {
 }
 
 async function getSettings() {
-  const result = await _getFromStorage("printSettings");
+  const result = await _getFromStorage("settings");
   return result;
 }
 

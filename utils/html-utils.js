@@ -25,6 +25,10 @@ function _htmlToElement(html) {
   return template.content.firstChild;
 }
 
+function _timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function _waitForElement(selector, delay = 50, tries = 20) {
   const element = document.querySelector(selector);
 
