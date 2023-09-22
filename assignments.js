@@ -6,6 +6,39 @@ async function initAssignments() {
 
   const todayElement = days.todayIsDay1 ? document.getElementById("day1") : document.getElementById("day2");
   setDay(todayElement);
+
+  _onSelectorChangeComplete("#assignment-center-list-view table", setupVisibilityColumn);
+}
+
+function toggleVisibilityHandler(event) {
+  const row = this.parentElement;
+  if (row.classList.contains("show-print")) {
+    row.classList.replace("show-print", "hide-print");
+  } else {
+    row.classList.replace("hide-print", "show-print");
+  }
+}
+
+function setupVisibilityColumn() {
+  // Add a column header if it does not exist
+  const printHeader = document.querySelectorAll("#assignment-center-list-view #print-header").length;
+  if (!printHeader) {
+    const assignmentHeaderRows = document.querySelectorAll("#assignment-center-list-view table thead tr");
+    assignmentHeaderRows.forEach(row => { row.insertAdjacentHTML(`afterbegin`, `<td id="print-header"></td>`); });
+  }
+
+  // Add a column if it does not exist
+  const printData = document.querySelectorAll(`#assignment-center-assignment-items tr [data-heading="Print"]`).length;
+  if (!printData) {
+    const assignmentRows = document.querySelectorAll("#assignment-center-assignment-items tr");
+    assignmentRows.forEach(row => {
+      const td = document.createElement("td");
+      td.setAttribute("data-heading", "Print")
+      td.onclick = toggleVisibilityHandler;
+      row.prepend(td);
+      row.classList.add("show-print");
+    });
+  }
 }
 
 function calculateDays(settings) {

@@ -22,7 +22,8 @@
         "utils/html-utils.js",
         "assignments.js",
         "router.js"
-      ]
+      ],
+      "css": ["assignments.css"]
     },
     {
       "matches":["*://coramdeoacademy.myschoolapp.com/*?pl=*"],
@@ -32,6 +33,12 @@
       ],
       "css": ["print-format.css"],
       "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches":["*://coramdeoacademy.myschoolapp.com/*"],
+      "resources": ["visible.png", "visible-off.png"]
     }
   ],
   "permissions": [ "storage" ]
