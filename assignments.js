@@ -1,4 +1,7 @@
+let _settings;
+
 async function initAssignments() {
+  _settings = await getSettings();
   await _waitForElement(".assignment-calendar-header");
   const { settings } = await _getFromStorage("settings");
   const days = calculateDays(settings);
@@ -9,6 +12,11 @@ async function initAssignments() {
 
   // Watch for changes to the table and update as needed
   _onSelectorChangeComplete("#assignment-center-list-view table", assignmentTableChangeHandler);
+}
+
+async function getSettings() {
+  const settings = await _getFromStorageByKey("settings");
+  return settings;
 }
 
 function toggleVisibilityHandler(event) {
@@ -66,12 +74,37 @@ function setupVisibilityColumn() {
 }
 
 async function setupAssignmentVisibility() {
-  const assignments = await _getFromStorageByKey("currentAssignments");
+  const savedAssignments = await _getFromStorageByKey("currentAssignments");
   const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
   assignmentRows.forEach(row => {
-    const foundAssignment = assignments.find(assignment => assignmentRowComparer(assignment, row));
-    setRowVisibility(row, foundAssignment?.show);
+    const isVisible = getRowVisibilty(row, savedAssignments);
+    setRowVisibility(row, isVisible);
   });
+}
+
+function getRowVisibilty(row, saveAssignments) {
+  const rowAssignment = rowToAssignment(row);
+  const defaultVisibility = getDefaultVisibility(rowAssignment);
+  const savedVisibility = getSavedVisibility(saveAssignments, rowAssignment);
+  const isVisible = (savedVisibility === undefined) ? defaultVisibility : savedVisibility;
+  return isVisible;
+}
+
+function getDefaultVisibility(assignment) {
+  if (!_settings["hide-non-homework"]) {
+    return true;
+  }
+
+  let isVisible = true;
+  if (assignment.type === "Participation" || assignment.type === "Classwork") {
+    isVisible = false;
+  }
+  return isVisible;
+}
+
+function getSavedVisibility(savedAssignments, assignment) {
+  const savedAssignment = savedAssignments.find(savedAssignment => savedAssignment.hashId === assignment.hashId);
+  return savedAssignment?.show;
 }
 
 function assignmentRowComparer(assignment, row) {
