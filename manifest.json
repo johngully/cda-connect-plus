@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name":"CDA Connect Plus",
   "description": "A browser extension that makes using CDA Connect easier",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "icons": {
     "16": "cda-blue-16.png",
     "32": "cda-blue-32.png",
@@ -18,6 +18,7 @@
     {
       "matches":["*://coramdeoacademy.myschoolapp.com/*"],
       "js":[
+        "utils/object-hash.js",
         "utils/date.js",
         "utils/html-utils.js",
         "assignments.js",
@@ -28,6 +29,7 @@
     {
       "matches":["*://coramdeoacademy.myschoolapp.com/*?pl=*"],
       "js": [
+        "utils/object-hash.js",
         "utils/html-utils.js",
         "print-format.js"
       ],

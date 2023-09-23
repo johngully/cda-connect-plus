@@ -7,16 +7,40 @@ async function initAssignments() {
   const todayElement = days.todayIsDay1 ? document.getElementById("day1") : document.getElementById("day2");
   setDay(todayElement);
 
-  _onSelectorChangeComplete("#assignment-center-list-view table", setupVisibilityColumn);
+  // Watch for changes to the table and update as needed
+  _onSelectorChangeComplete("#assignment-center-list-view table", assignmentTableChangeHandler);
 }
 
 function toggleVisibilityHandler(event) {
   const row = this.parentElement;
-  if (row.classList.contains("show-print")) {
-    row.classList.replace("show-print", "hide-print");
-  } else {
+  toggleRowVisibility(row);
+  // Save the assignments with their visibility status
+  // so that they can be referenced later for paging or print
+  saveAssignments();
+}
+
+function toggleRowVisibility(row) {
+  isVisible = row.classList.contains("show-print");
+  setRowVisibility(row, !isVisible);
+}
+
+function setRowVisibility(row, isVisible = true) {
+  if (isVisible) {
     row.classList.replace("hide-print", "show-print");
-  }
+  } else {
+    row.classList.replace("show-print", "hide-print");
+  } 
+}
+
+async function saveAssignments() {
+  const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
+  const currentAssignments = assignmentRows.map(rowToAssignment);
+  await _setToStorage({ currentAssignments });
+}
+
+function assignmentTableChangeHandler() {
+  setupVisibilityColumn();
+  setupAssignmentVisibility();
 }
 
 function setupVisibilityColumn() {
@@ -36,9 +60,37 @@ function setupVisibilityColumn() {
       td.setAttribute("data-heading", "Print")
       td.onclick = toggleVisibilityHandler;
       row.prepend(td);
-      row.classList.add("show-print");
+      row.classList.add("hide-print"); // Set the initial state a hidden since it will be flipped the 1st time through
     });
   }
+}
+
+async function setupAssignmentVisibility() {
+  const assignments = await _getFromStorageByKey("currentAssignments");
+  const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
+  assignmentRows.forEach(row => {
+    const foundAssignment = assignments.find(assignment => assignmentRowComparer(assignment, row));
+    setRowVisibility(row, foundAssignment?.show);
+  });
+}
+
+function assignmentRowComparer(assignment, row) {
+  const rowAssignment = rowToAssignment(row);
+  const isSame = rowAssignment.hashId === assignment.hashId;
+  return isSame;
+}
+
+function rowToAssignment(row) {
+  const assignment = {
+    class: row.querySelector(`td[data-heading="Class"]`).textContent,
+    type: row.querySelector(`td[data-heading="Type"]`).textContent,
+    details: row.querySelector(`td[data-heading="Details"]`).textContent,
+    assign: row.querySelector(`td[data-heading="Assign"]`).textContent,
+    due: row.querySelector(`td[data-heading="Due"]`).textContent
+  };
+  assignment.hashId = objectHash.sha1(assignment);
+  assignment.show = row.classList.contains("show-print");
+  return assignment;
 }
 
 function calculateDays(settings) {

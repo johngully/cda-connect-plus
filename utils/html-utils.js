@@ -10,6 +10,11 @@ function _getFromStorage(key) {
   });
 }
 
+async function _getFromStorageByKey(key) {
+  const result = await _getFromStorage(key)
+  return result[key];
+}
+
 function _setToStorage(data) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.set(data, function (obj) {
