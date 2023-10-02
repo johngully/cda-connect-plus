@@ -15,8 +15,11 @@ function handleUrlChanges() {
 }
 
 function onUrlChange() {
-  const isAssignmentsUrl = /^(?!.*\?pl.*\/assignments$)/.test(document.URL)
-  if (isAssignmentsUrl) {
+  const isAssigmentsPrintUrl = /\?pl=.*assignment-center$/.test(document.URL) || /\?pl=.*assignments$/.test(document.URL);
+  const isAssignmentsUrl = /assignment-center$/.test(document.URL) || /assignments$/.test(document.URL);
+  if (isAssigmentsPrintUrl) {
+    initPrintFormat();
+  } else if (isAssignmentsUrl) {
     initAssignments();
   }
 }

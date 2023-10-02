@@ -1,0 +1,18 @@
+#site-main .hide-print, .hide-print a {
+  color: #cccccc !important;
+}
+
+#site-main .hide-print td:first-child, .show-print td:first-child {
+  min-width: 32px;
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#site-main .hide-print td:first-child {
+  background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible-off.png);
+}
+
+#site-main .show-print td:first-child {
+  background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible.png) ;
+}

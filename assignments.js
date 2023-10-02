@@ -1,11 +1,68 @@
+let _settings;
+
 async function initAssignments() {
+  _settings = await getSettings();
   await _waitForElement(".assignment-calendar-header");
   const { settings } = await _getFromStorage("settings");
   const days = calculateDays(settings);
   setupDayOfWeekButtons(days);
 
   const todayElement = days.todayIsDay1 ? document.getElementById("day1") : document.getElementById("day2");
-  dayChange(todayElement);
+  setDay(todayElement);
+
+  // Watch for changes to the table and update as needed
+  _onSelectorChangeComplete("#assignment-center-list-view table", assignmentTableChangeHandler);
+}
+
+async function getSettings() {
+  const settings = await _getFromStorageByKey("settings");
+  return settings;
+}
+
+function toggleVisibilityHandler(event) {
+  const row = this.parentElement;
+  toggleRowVisibility(row);
+  // Save the assignments with their visibility status
+  // so that they can be referenced later for paging or print
+  saveAssignments();
+}
+
+function toggleRowVisibility(row) {
+  isVisible = row.classList.contains("show-print");
+  setRowVisibility(row, !isVisible);
+}
+
+async function saveAssignments() {
+  const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
+  const currentAssignments = assignmentRows.map(rowToAssignment);
+  await _setToStorage({ currentAssignments });
+}
+
+function assignmentTableChangeHandler() {
+  setupVisibilityColumn();
+  setupAssignmentVisibility();
+}
+
+function setupVisibilityColumn() {
+  // Add a column header if it does not exist
+  const printHeader = document.querySelectorAll("#assignment-center-list-view #print-header").length;
+  if (!printHeader) {
+    const assignmentHeaderRows = document.querySelectorAll("#assignment-center-list-view table thead tr");
+    assignmentHeaderRows.forEach(row => { row.insertAdjacentHTML(`afterbegin`, `<td id="print-header"></td>`); });
+  }
+
+  // Add a column if it does not exist
+  const printData = document.querySelectorAll(`#assignment-center-assignment-items tr [data-heading="Print"]`).length;
+  if (!printData) {
+    const assignmentRows = document.querySelectorAll("#assignment-center-assignment-items tr");
+    assignmentRows.forEach(row => {
+      const td = document.createElement("td");
+      td.setAttribute("data-heading", "Print")
+      td.onclick = toggleVisibilityHandler;
+      row.prepend(td);
+      row.classList.add("hide-print"); // Set the initial state a hidden since it will be flipped the 1st time through
+    });
+  }
 }
 
 function calculateDays(settings) {
@@ -42,12 +99,12 @@ function setupDayOfWeekButtons(days) {
   
   const dayFilters = _htmlToElement(`
   <div id="dayFilters" class="btn-group btn-group-sm views-button pull-right" data-toggle="buttons">
-    <label name="test" class="btn btn-default"><input type="radio" id="day1Before" name="dayofweek" autocomplete="off" value="${days.day1Before.toString('MM-dd-yyyy')}" />${days.day1Before.toString("M/d")}</label>
-    <label name="test" class="btn btn-default"><input type="radio" id="day2Before" name="dayofweek" autocomplete="off" value="${days.day2Before.toString('MM-dd-yyyy')}" />${days.day2Before.toString("M/d")}</label>
-    <label name="test" class="btn btn-default ${day1Active}"><input type="radio" id="day1" name="dayofweek" autocomplete="off" value="${days.day1.toString('MM-dd-yyyy')}" />${days.day1.toString("M/d")}</label>
-    <label name="test" class="btn btn-default ${day2Active}"><input type="radio" id="day2" name="dayofweek" autocomplete="off" value="${days.day2.toString('MM-dd-yyyy')}" />${days.day2.toString("M/d")}</label>
-    <label name="test" class="btn btn-default"><input type="radio" id="day1After" name="dayofweek" autocomplete="off" value="${days.day1After.toString('MM-dd-yyyy')}" />${days.day1After.toString("M/d")}</label>
-    <label name="test" class="btn btn-default"><input type="radio" id="day2After" name="dayofweek" autocomplete="off" value="${days.day2After.toString('MM-dd-yyyy')}" />${days.day2After.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default"><input type="radio" id="day1Before" autocomplete="off" value="${days.day1Before.toString('MM-dd-yyyy')}" />${days.day1Before.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default"><input type="radio" id="day2Before" autocomplete="off" value="${days.day2Before.toString('MM-dd-yyyy')}" />${days.day2Before.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default ${day1Active}"><input type="radio" id="day1" autocomplete="off" value="${days.day1.toString('MM-dd-yyyy')}" />${days.day1.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default ${day2Active}"><input type="radio" id="day2" autocomplete="off" value="${days.day2.toString('MM-dd-yyyy')}" />${days.day2.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default"><input type="radio" id="day1After" autocomplete="off" value="${days.day1After.toString('MM-dd-yyyy')}" />${days.day1After.toString("M/d")}</label>
+    <label name="dayofweek" class="btn btn-default"><input type="radio" id="day2After" autocomplete="off" value="${days.day2After.toString('MM-dd-yyyy')}" />${days.day2After.toString("M/d")}</label>
   </div>
   `);
   
@@ -57,12 +114,12 @@ function setupDayOfWeekButtons(days) {
 
   // Add click events to the labels
   // Adding change events to the radio inputs didn't work for some reason
-  document.getElementsByName("test").forEach(dayElement => {
-    dayElement.addEventListener("click", event => { dayChange(event.target.firstChild); });
+  document.getElementsByName("dayofweek").forEach(dayElement => {
+    dayElement.addEventListener("click", event => { setDay(event.target.firstChild); });
   });
 }
 
-async function dayChange(input) {
+async function setDay(input) {
   const day = new Date(input.value);
   const dateRange = calculateDateRange(day);
   await setRange(dateRange);

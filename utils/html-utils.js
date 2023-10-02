@@ -10,6 +10,11 @@ function _getFromStorage(key) {
   });
 }
 
+async function _getFromStorageByKey(key) {
+  const result = await _getFromStorage(key)
+  return result[key];
+}
+
 function _setToStorage(data) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.set(data, function (obj) {
@@ -55,4 +60,18 @@ function _waitForElement(selector, delay = 50, tries = 20) {
   } else {
     return Promise.resolve(element);
   }
+}
+
+function _onSelectorChangeComplete(selector, callback) {
+  let timer;
+  const observer = new MutationObserver(() => {
+    if (timer) { clearTimeout(timer); }
+    timer = setTimeout(() => {
+      observer.disconnect();
+      callback();
+      observer.observe(document.querySelector(selector), { childList: true, subtree: true });
+    }, 20);
+  });
+  observer.observe(document.querySelector(selector), { childList: true, subtree: true });
+  return observer;
 }
