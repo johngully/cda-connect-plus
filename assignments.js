@@ -32,14 +32,6 @@ function toggleRowVisibility(row) {
   setRowVisibility(row, !isVisible);
 }
 
-function setRowVisibility(row, isVisible = true) {
-  if (isVisible) {
-    row.classList.replace("hide-print", "show-print");
-  } else {
-    row.classList.replace("show-print", "hide-print");
-  } 
-}
-
 async function saveAssignments() {
   const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
   const currentAssignments = assignmentRows.map(rowToAssignment);
@@ -71,59 +63,6 @@ function setupVisibilityColumn() {
       row.classList.add("hide-print"); // Set the initial state a hidden since it will be flipped the 1st time through
     });
   }
-}
-
-async function setupAssignmentVisibility() {
-  const savedAssignments = await _getFromStorageByKey("currentAssignments");
-  const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
-  assignmentRows.forEach(row => {
-    const isVisible = getRowVisibilty(row, savedAssignments);
-    setRowVisibility(row, isVisible);
-  });
-}
-
-function getRowVisibilty(row, saveAssignments) {
-  const rowAssignment = rowToAssignment(row);
-  const defaultVisibility = getDefaultVisibility(rowAssignment);
-  const savedVisibility = getSavedVisibility(saveAssignments, rowAssignment);
-  const isVisible = (savedVisibility === undefined) ? defaultVisibility : savedVisibility;
-  return isVisible;
-}
-
-function getDefaultVisibility(assignment) {
-  if (!_settings["hide-non-homework"]) {
-    return true;
-  }
-
-  let isVisible = true;
-  if (assignment.type === "Participation" || assignment.type === "Classwork") {
-    isVisible = false;
-  }
-  return isVisible;
-}
-
-function getSavedVisibility(savedAssignments, assignment) {
-  const savedAssignment = savedAssignments.find(savedAssignment => savedAssignment.hashId === assignment.hashId);
-  return savedAssignment?.show;
-}
-
-function assignmentRowComparer(assignment, row) {
-  const rowAssignment = rowToAssignment(row);
-  const isSame = rowAssignment.hashId === assignment.hashId;
-  return isSame;
-}
-
-function rowToAssignment(row) {
-  const assignment = {
-    class: row.querySelector(`td[data-heading="Class"]`).textContent,
-    type: row.querySelector(`td[data-heading="Type"]`).textContent,
-    details: row.querySelector(`td[data-heading="Details"]`).textContent,
-    assign: row.querySelector(`td[data-heading="Assign"]`).textContent,
-    due: row.querySelector(`td[data-heading="Due"]`).textContent
-  };
-  assignment.hashId = objectHash.sha1(assignment);
-  assignment.show = row.classList.contains("show-print");
-  return assignment;
 }
 
 function calculateDays(settings) {

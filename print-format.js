@@ -1,7 +1,10 @@
-async function init() {
-  const { settings } = await getSettings();
-  await removeExtraAssignments(settings);
-  await removeExtraColumns(settings);
+let _settingsPrint;
+
+async function initPrintFormat() {
+  _settingsPrint = await getSettings();
+  _settings = await getSettings();
+  await removeExtraAssignments(_settingsPrint);
+  await removeExtraColumns(_settingsPrint);
 }
 
 async function removeExtraAssignments(settings) {
@@ -9,27 +12,14 @@ async function removeExtraAssignments(settings) {
     return;
   }
 
-  // When the setting is enabled add a class to the table
+  // When the setting is enabled add a class to the table and each row
   await _waitForElement("#assignment-center-list-view table td");
   document.querySelector("#assignment-center-list-view").classList.add("hide-non-homework");
+  const assignmentRows = [...document.querySelectorAll("#assignment-center-assignment-items tr")];
+  assignmentRows.forEach(row => row.classList.add("show-print"));
 
   // Find rows that need to be removed
-  removeNonHomeworkRows();
-}
-
-function removeNonHomeworkRows() {
-  const details =[...document.querySelectorAll(`#assignment-center-list-view table td[data-heading="Details"]`)];
-  const cells = details.filter(detail => {
-    // Find cells with content that is suspected to not be an assignement
-    const professionalism = /^(?=.*Professionalism).*/ig.test(detail.innerText);
-    const conduct = /^(?=.*Class conduct).*/ig.test(detail.innerText);
-    const participation = /^(?=.*Class participation).*/ig.test(detail.innerText);
-    return professionalism || conduct || participation;
-  });
-
-  // Add .hide class to those rows
-  const rows = cells.map(cell => cell.parentElement);
-  addClassToElements(rows, "hide");
+  await setupAssignmentVisibility()
 }
 
 async function removeExtraColumns(settings) {
@@ -61,8 +51,6 @@ function addClassToElements(elements, className) {
 }
 
 async function getSettings() {
-  const result = await _getFromStorage("settings");
-  return result;
+  const settings = await _getFromStorageByKey("settings");
+  return settings;
 }
-
-init();

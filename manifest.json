@@ -22,6 +22,7 @@
         "utils/date.js",
         "utils/html-utils.js",
         "assignments.js",
+        "assignment-visibility.js",
         "router.js"
       ],
       "css": ["assignments.css"]
@@ -31,6 +32,7 @@
       "js": [
         "utils/object-hash.js",
         "utils/html-utils.js",
+        "assignment-visibility.js",
         "print-format.js"
       ],
       "css": ["print-format.css"],

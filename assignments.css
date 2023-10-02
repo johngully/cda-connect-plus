@@ -1,18 +1,18 @@
-.hide-print, .hide-print a {
+#site-main .hide-print, .hide-print a {
   color: #cccccc !important;
 }
 
-.hide-print td:first-child, .show-print td:first-child {
+#site-main .hide-print td:first-child, .show-print td:first-child {
   min-width: 32px;
   background-size: 16px;
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.hide-print td:first-child {
+#site-main .hide-print td:first-child {
   background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible-off.png);
 }
 
-.show-print td:first-child {
+#site-main .show-print td:first-child {
   background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible.png) ;
 }

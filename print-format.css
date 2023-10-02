@@ -29,3 +29,11 @@
 #assignment-center-list-view.hide-non-homework table tr.hide {
   display: none !important;
 }
+
+#assignment-center-list-view.hide-non-homework table tr.hide-print {
+  display: none !important;
+}
+
+#assignment-center-list-view.hide-non-homework table tr.show-print {
+  display: table-row !important;
+}
