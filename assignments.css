@@ -10,9 +10,11 @@
 }
 
 #site-main .hide-print td:first-child {
-  background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible-off.png);
+  /* background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible-off.png); */
+  background-image: url(chrome-extension://dndpegbedoaaphodhabnfbmlalfjmeeb/visible-off.png);
 }
 
 #site-main .show-print td:first-child {
-  background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible.png) ;
+  /* background-image: url(chrome-extension://acfdnckoekfkmmlbbhedlgihbnehfeop/visible.png) ; */
+  background-image: url(chrome-extension://dndpegbedoaaphodhabnfbmlalfjmeeb/visible.png) ;
 }
