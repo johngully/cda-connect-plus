@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name":"CDA Connect Plus",
   "description": "A browser extension that makes using CDA Connect easier",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "icons": {
     "16": "cda-blue-16.png",
     "32": "cda-blue-32.png",

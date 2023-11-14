@@ -44,11 +44,11 @@ function getSavedVisibility(savedAssignments, assignment) {
 
 function rowToAssignment(row) {
   const assignment = {
-    class: row.querySelector(`td[data-heading="Class"]`).innerText,
-    type: row.querySelector(`td[data-heading="Type"]`).innerText,
-    details: row.querySelector(`td[data-heading="Details"]`).innerText.split('\n', 1)[0].replace(/\s/g, ''),
-    assign: row.querySelector(`td[data-heading="Assign"]`).innerText,
-    due: row.querySelector(`td[data-heading="Due"]`).innerText
+    class: row.querySelector(`td[data-heading="Class"]`)?.innerText,
+    type: row.querySelector(`td[data-heading="Type"]`)?.innerText,
+    details: row.querySelector(`td[data-heading="Details"]`)?.innerText.split('\n', 1)[0].replace(/\s/g, ''),
+    assign: row.querySelector(`td[data-heading="Assign"]`)?.innerText,
+    due: row.querySelector(`td[data-heading="Due"]`)?.innerText
   };
   assignment.hashId = objectHash.sha1(assignment);
   assignment.show = row.classList.contains("show-print");
