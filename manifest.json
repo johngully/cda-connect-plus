@@ -23,9 +23,10 @@
         "utils/html-utils.js",
         "assignments.js",
         "assignment-visibility.js",
+        "calendar.js",
         "router.js"
       ],
-      "css": ["assignments.css"]
+      "css": ["assignments.css", "calendar.css"]
     },
     {
       "matches":["*://coramdeoacademy.myschoolapp.com/*?pl=*"],

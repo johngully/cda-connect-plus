@@ -1,0 +1,33 @@
+@media print {
+  h2.fc-toolbar-title {
+    display: none !important;
+  }
+
+  div,
+  .fc-scroller tr,
+  .fc-scroller th, 
+  .fc-scroller>td {
+    border-width: 0 !important;
+  }
+  .list-event-table-fc > td {
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  .fc-scroller.optimize-columns table.fc-list-table tr[data-date] {
+    display: none !important;
+  }
+
+  .fc-scroller.optimize-columns table.list-event-table-fc tr > *:nth-child(1) {
+    display: none !important;
+  }
+
+  .fc-scroller.optimize-columns table.list-event-table-fc tr > *:nth-child(2) {
+    font-size: .75rem;
+    width: 10%;
+  }
+
+  .fc-scroller.optimize-columns table.list-event-table-fc tr > *:nth-child(3) {
+    width: 90%;
+  }
+}
