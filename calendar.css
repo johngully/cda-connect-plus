@@ -1,5 +1,18 @@
+.assignment-downloads {
+  margin-top: 1rem;
+}
+
+.assignment-downloads div {
+  font-weight: bold;
+}
+
+.assignment-download-link {
+  display: block;
+}
+
 @media print {
-  h2.fc-toolbar-title {
+  h2.fc-toolbar-title,
+  a.detail-link {
     display: none !important;
   }
 
@@ -29,5 +42,9 @@
 
   .fc-scroller.optimize-columns table.list-event-table-fc tr > *:nth-child(3) {
     width: 90%;
+  }
+
+  .fc-scroller .assignment-downloads {
+    display:none;
   }
 }
