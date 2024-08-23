@@ -55,21 +55,26 @@ function getAssignmentDownloadsLinks(downloads) {
 }
 
 async function getAssignmentDetails(assignmentDetailUrl) {
-  const { assignmentId, studentId } = getAssignmentAndStudentIdFromAssignmentDetailUrl(assignmentDetailUrl);
-  const assignmentDetailsApiUrl = `/api/assignment2/UserAssignmentDetailsGetAllStudentData?assignmentIndexId=${assignmentId}&studentUserId=${studentId}&personaId=1`;
+  const assignmentId = getAssignmentAndStudentIdFromAssignmentDetailUrl(assignmentDetailUrl);
+  const url = document.querySelector("a#mobile-profile-link")?.href;
+  const studentId = getStudentIdFromProfileUrl(url);
+  const assignmentDetailsApiUrl = `/api/assignment2/UserAssignmentDetailsGetAllStudentData?assignmentIndexId=${assignmentId}&studentUserId=${studentId}&personaId=1`;  
   const assignmentDetails = await fetchJson(assignmentDetailsApiUrl);
   return assignmentDetails;
+}
+
+function getStudentIdFromProfileUrl(url) {
+  const parts = url.split('/');
+  const studentId = parts[parts.length - 2];
+  return studentId;
 }
 
 function getAssignmentAndStudentIdFromAssignmentDetailUrl(url) {
   // Split the URL by slashes
   const parts = url.split('/');
-
-  // Extract the assignmentId and studentId based on their position in the URL
-  const assignmentId = parts[parts.length - 2];
-  const studentId = parts[parts.length - 1];
-
-  return { assignmentId, studentId };
+  const mode = url.includes("assignment-student-view") ? "student" : "parent";
+  const assignmentId = mode === "parent" ? parts[parts.length - 2] : parts[parts.length - 1];
+  return assignmentId;
 }
 
 // async function getDocumentFromUrl(relateiveUrl) {
