@@ -1,5 +1,3 @@
-let loaded = false;
-let _observer;
 async function initCalendarAssignments() {
   await _waitForElement(".assignment-calendar-header");
   const { settings } = await _getFromStorage("settings");
@@ -7,19 +5,13 @@ async function initCalendarAssignments() {
   if (settings["optimize-columns"]) {
     await _waitForElement(".fc-scroller");
     document.querySelector(".fc-scroller").classList.add("optimize-columns");
-   // Watch for changes to the table and update as needed
-   _onSelectorChangeComplete(".fc-scroller", calendarAssignmentsTableChangeHandler);
-  }
 
+    await _waitForElement(".fc-scroller table.fc-list-table tbody");
+    calendarAssignmentsTableChangeHandler();
+  }
 }
 
 async function calendarAssignmentsTableChangeHandler() {
-  console.log("calendarAssignmentsTableChangeHandler")
-  if (loaded) {
-    return;
-  }
-  
-  loaded = true; // Set the loaded flag so that modifications to the childrend don't cause a seletor change
   await reviseAssignmentDates();
   addDownloadLinks();
 }
@@ -33,11 +25,17 @@ async function addDownloadLinks() {
   //       Using assignments.forEach instead of for (const assignment of assignments)
   //       allows the requests to be made in parallel
   assignments.forEach(async (assignment) => {
-    let assignmentDetailUrl = assignment.querySelector("a.detail-link")?.getAttribute('href');
+    const assignmentDetailsLink = assignment.querySelector("a.detail-link");
+    let assignmentDetailUrl = assignmentDetailsLink?.getAttribute('href');
     if (!assignmentDetailUrl) return;
     const assignmentDetails = await getAssignmentDetails(assignmentDetailUrl)
     const downloadLinks = getAssignmentDownloadsLinks(assignmentDetails.DownloadItems);
-    if (!downloadLinks) return;
+    if (!downloadLinks) {
+      const noDownloadsElement = _htmlToElement(`<span class="assignment-downloads no-downloads">No downloads found</span>`);
+      assignmentDetailsLink.parentElement.append(noDownloadsElement);
+      return;
+    };
+
     const assignmentElement = assignment.querySelector("tbody tr > td:nth-child(3)");
     if (!assignmentElement) return;
     assignmentElement.append(downloadLinks);
@@ -46,12 +44,11 @@ async function addDownloadLinks() {
 
 function getAssignmentDownloadsLinks(downloads) {
   const links = downloads.map(download => `<a href="${download.DownloadUrl}" class="assignment-download-link" target="_blank">${download.ShortDescription}</a>`);
+  let elements;// = _htmlToElement(`<div class="assignment-downloads no-downloads"><div>No downloads for this assignment</div></div>`);
   if (links.length) {
-    const elements = _htmlToElement(`<div class="assignment-downloads"><div>Downloads</div>${links.join('')}</div>`);
-    return elements;  
-  } else {
-    return;
-  }
+    elements = _htmlToElement(`<div class="assignment-downloads has-downloads"><div>Downloads</div>${links.join('')}</div>`);
+  } 
+  return elements;
 }
 
 async function getAssignmentDetails(assignmentDetailUrl) {
@@ -76,15 +73,6 @@ function getAssignmentAndStudentIdFromAssignmentDetailUrl(url) {
   const assignmentId = mode === "parent" ? parts[parts.length - 2] : parts[parts.length - 1];
   return assignmentId;
 }
-
-// async function getDocumentFromUrl(relateiveUrl) {
-//   const origin = window.location.origin;
-//   const url = new URL(relateiveUrl, origin).href;
-//   const result = await fetch(url);
-//   const parser = new DOMParser();
-//   const doc = parser.parseFromString(result, 'text/html');
-//   return doc;
-// }
 
 async function fetchJson(url, isRelative = true) {
   try {

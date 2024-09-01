@@ -2,7 +2,13 @@
   margin-top: 1rem;
 }
 
-.assignment-downloads div {
+.no-downloads {
+  margin-left: 1rem;
+  color: #cccccc;
+  text-transform: capitalize;
+}
+
+.assignment-downloads.has-downloads div {
   font-weight: bold;
 }
 
@@ -48,7 +54,11 @@
     display: none !important;
   }
 
-  .fc-scroller .assignment-downloads {
-    display:none;
+  .no-downloads {
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: x-small;
+    margin-top: .33rem;
+    margin-left: 0;
   }
 }

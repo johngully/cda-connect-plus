@@ -62,14 +62,16 @@ function _waitForElement(selector, delay = 50, tries = 20) {
   }
 }
 
-function _onSelectorChangeComplete(selector, callback) {
+function _onSelectorChangeComplete(selector, callback, runOnce) {
   let timer;
   const observer = new MutationObserver(() => {
     if (timer) { clearTimeout(timer); }
     timer = setTimeout(() => {
       observer.disconnect();
       callback();
-      observer.observe(document.querySelector(selector), { childList: true, subtree: true });
+      if (!runOnce) {
+        observer.observe(document.querySelector(selector), { childList: true, subtree: true });
+      }
     }, 20);
   });
   observer.observe(document.querySelector(selector), { childList: true, subtree: true });
